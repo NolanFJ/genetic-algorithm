@@ -1,0 +1,13 @@
+# VS Code settings folder (safe to ignore)
+.vs/
+
+# Build output directory
+build/
+
+# Compiled object files and executables
+*.o
+*.obj
+*.exe
+*.out
+*.log
+

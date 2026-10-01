@@ -1,5 +1,3 @@
-// 12/13/2024
-
 #include <iostream>
 #include <array>
 #include <vector>
@@ -563,6 +561,25 @@ class Robot
 
             moveRobot(actionCode);  
         }
+
+        // put the robot back at its stating state but keep its genes   
+        void reset() 
+        {
+            m_power = 5;
+            m_turnsSurvived = 0;
+            m_powerHarvested = 0;
+            m_sensor = {};
+            m_map = Map{};
+
+            // pick a new random empty spawn point
+            do
+            {
+                m_coordinates.x = 1 + (rand() % 10);
+                m_coordinates.y = 1 + (rand() % 10);
+            } while (!m_map.isPositionEmpty(m_coordinates.x, m_coordinates.y));
+
+            m_map.placeRobot(m_coordinates.x, m_coordinates.y);
+        }
 };
 
 // Function Prototypes
@@ -578,17 +595,23 @@ int main()
     // determines if robot is still alive or not
     bool alive {true};
 
-    // create the population of 200 robots
-    std::vector<Robot> robots(200);
+    // create the population of 1000 robots
+    std::vector<Robot> robots(1000);
 
     // keep track of number of generations
     int generation {};
 
-    // run through 100 generations 
+    // run through 2000 generations 
     // print the fitness score for each generation
-    while (generation < 100)
+    while (generation < 2000)
     {
         int totalPowerHarvested {};
+
+        // every robot (survivors and children) starts fresh each generation
+        for (Robot& robot: robots) 
+        {
+            robot.reset();
+        }
 
         for (std::size_t i {0}; i < robots.size(); ++i)
         {
@@ -612,7 +635,7 @@ int main()
             }
         }
 
-        std::cout << "The Average Fitness Score for Generation #" << generation << ": " << (totalPowerHarvested / static_cast<int>(robots.size())) << '\n';
+        std::cout << "The Average Fitness Score for Generation #" << generation + 1 << ": " << (totalPowerHarvested / static_cast<int>(robots.size())) << '\n';
 
         sortVector(robots);
         destroyBottom50Percent(robots); 
